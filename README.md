@@ -9,6 +9,8 @@ Simple and highly customizable iOS tag list view, in Swift.
 
 Supports Storyboard, Auto Layout, and @IBDesignable.
 
+**Updated** to support selection of tags from the code thanks to [@EvsenevDev](https://github.com/EvsenevDev/TagListView) repo.
+ 
 <img alt="Screenshot" src="Screenshots/Screenshot.png" width="310">
 
 ## Usage
