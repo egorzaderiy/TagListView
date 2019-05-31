@@ -52,7 +52,7 @@ open class TagView: UIButton {
     }
     @IBInspectable open var paddingX: CGFloat = 5 {
         didSet {
-            titleEdgeInsets.left = paddingX
+            updateLeftInsets()
             updateRightInsets()
         }
     }
@@ -99,11 +99,19 @@ open class TagView: UIButton {
             backgroundColor = selectedBackgroundColor ?? tagBackgroundColor
             layer.borderColor = selectedBorderColor?.cgColor ?? borderColor?.cgColor
             setTitleColor(selectedTextColor, for: UIControl.State())
+            
+            checkmarkView.image = checkmarkViewImage
+            checkmarkView.layer.borderWidth = 0
+            checkmarkView.layer.borderColor = checkmarkViewBorderSelectedColor.cgColor
         }
         else {
             backgroundColor = tagBackgroundColor
             layer.borderColor = borderColor?.cgColor
             setTitleColor(textColor, for: UIControl.State())
+            
+            checkmarkView.image = nil
+            checkmarkView.layer.borderWidth = checkmarkViewBorderWidth
+            checkmarkView.layer.borderColor = checkmarkViewBorderNormalColor.cgColor
         }
     }
     
@@ -148,6 +156,52 @@ open class TagView: UIButton {
         }
     }
     
+    // MARK: checkmark
+    
+    let checkmarkView = UIImageView()
+    open var checkmarkViewImage: UIImage? {
+        didSet {
+            if isSelected {
+                checkmarkView.image = checkmarkViewImage
+            }
+        }
+    }
+    
+    @IBInspectable open var enableCheckmarkView: Bool = false {
+        didSet {
+            checkmarkView.isHidden = !enableCheckmarkView
+            updateLeftInsets()
+        }
+    }
+    
+    @IBInspectable open var checkmarkViewIconSize: CGFloat = 15 {
+        didSet {
+            updateLeftInsets()
+        }
+    }
+    
+    @IBInspectable open var checkmarkViewBorderWidth: CGFloat = 2 {
+        didSet {
+            if !isSelected {
+                checkmarkView.layer.borderWidth = checkmarkViewBorderWidth
+            }
+        }
+    }
+    @IBInspectable open var checkmarkViewBorderSelectedColor: UIColor = UIColor.white.withAlphaComponent(0.54) {
+        didSet {
+            if isSelected {
+                checkmarkView.layer.borderColor = checkmarkViewBorderSelectedColor.cgColor
+            }
+        }
+    }
+    @IBInspectable open var checkmarkViewBorderNormalColor: UIColor = UIColor.white.withAlphaComponent(0.54) {
+        didSet {
+            if !isSelected {
+                checkmarkView.layer.borderColor = checkmarkViewBorderNormalColor.cgColor
+            }
+        }
+    }
+    
     /// Handles Tap (TouchUpInside)
     open var onTap: ((TagView) -> Void)?
     open var onLongPress: ((TagView) -> Void)?
@@ -174,6 +228,10 @@ open class TagView: UIButton {
         addSubview(removeButton)
         removeButton.tagView = self
         
+        addSubview(checkmarkView)
+        checkmarkView.layer.cornerRadius = 2
+        checkmarkView.layer.masksToBounds = true
+        
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.longPress))
         self.addGestureRecognizer(longPress)
     }
@@ -194,6 +252,9 @@ open class TagView: UIButton {
         if enableRemoveButton {
             size.width += removeButtonIconSize + paddingX
         }
+        if enableCheckmarkView {
+            size.width += checkmarkViewIconSize + paddingX
+        }
         return size
     }
     
@@ -205,6 +266,15 @@ open class TagView: UIButton {
             titleEdgeInsets.right = paddingX
         }
     }
+ 
+    private func updateLeftInsets() {
+        if enableCheckmarkView {
+            titleEdgeInsets.left = paddingX  + removeButtonIconSize + paddingX
+        }
+        else {
+            titleEdgeInsets.left = paddingX
+        }
+    }
     
     open override func layoutSubviews() {
         super.layoutSubviews()
@@ -213,6 +283,12 @@ open class TagView: UIButton {
             removeButton.frame.origin.x = self.frame.width - removeButton.frame.width
             removeButton.frame.size.height = self.frame.height
             removeButton.frame.origin.y = 0
+        }
+        if enableCheckmarkView {
+            checkmarkView.frame.size.width = checkmarkViewIconSize
+            checkmarkView.frame.origin.x = paddingX
+            checkmarkView.frame.size.height = checkmarkViewIconSize
+            checkmarkView.frame.origin.y = (self.frame.height - checkmarkViewIconSize) / 2.0
         }
     }
 }

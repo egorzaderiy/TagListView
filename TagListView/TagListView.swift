@@ -197,6 +197,60 @@ open class TagListView: UIView {
             }
         }
     }
+    
+    @IBInspectable open dynamic var enableCheckmarkView: Bool = false {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.enableCheckmarkView = enableCheckmarkView
+            }
+        }
+    }
+    
+    @IBInspectable open dynamic var checkmarkViewIconSize: CGFloat = 15 {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.checkmarkViewIconSize = checkmarkViewIconSize
+            }
+        }
+    }
+    
+    @IBInspectable open dynamic var checkmarkViewBorderWidth: CGFloat = 2 {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.checkmarkViewBorderWidth = checkmarkViewBorderWidth
+            }
+        }
+    }
+    
+    @IBInspectable open dynamic var checkmarkViewBorderSelectedColor: UIColor = UIColor.white.withAlphaComponent(0.54) {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.checkmarkViewBorderSelectedColor = checkmarkViewBorderSelectedColor
+            }
+        }
+    }
+    
+    @IBInspectable open dynamic var checkmarkViewBorderNormalColor: UIColor = UIColor.white.withAlphaComponent(0.54) {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.checkmarkViewBorderNormalColor = checkmarkViewBorderNormalColor
+            }
+        }
+    }
+    
+    @objc open dynamic var checkmarkViewImage: UIImage? {
+        didSet {
+            defer { rearrangeViews() }
+            tagViews.forEach {
+                $0.checkmarkViewImage = checkmarkViewImage
+            }
+        }
+    }
 
     @IBInspectable open dynamic var enableMutipleSelection: Bool = false
       
@@ -320,10 +374,19 @@ open class TagListView: UIView {
         tagView.paddingX = paddingX
         tagView.paddingY = paddingY
         tagView.textFont = textFont
+        
         tagView.removeIconLineWidth = removeIconLineWidth
         tagView.removeButtonIconSize = removeButtonIconSize
         tagView.enableRemoveButton = enableRemoveButton
         tagView.removeIconLineColor = removeIconLineColor
+        
+        tagView.checkmarkViewIconSize = checkmarkViewIconSize
+        tagView.checkmarkViewBorderWidth = checkmarkViewBorderWidth
+        tagView.checkmarkViewBorderSelectedColor = checkmarkViewBorderSelectedColor
+        tagView.checkmarkViewBorderNormalColor = checkmarkViewBorderNormalColor
+        tagView.enableCheckmarkView = enableCheckmarkView
+        tagView.checkmarkViewImage = checkmarkViewImage
+
         tagView.addTarget(self, action: #selector(tagPressed(_:)), for: .touchUpInside)
         tagView.removeButton.addTarget(self, action: #selector(removeButtonPressed(_:)), for: .touchUpInside)
         
